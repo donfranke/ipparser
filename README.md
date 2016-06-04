@@ -9,3 +9,6 @@ Example
 ```
 go ./ipparser both urls.txt
 ```
+
+# Requirements
+Go
