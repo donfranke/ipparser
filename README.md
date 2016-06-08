@@ -4,7 +4,7 @@ This is a utility for taking a list of IP addresses in varying formats and extra
 
 Usage: [src|dest|both] [source filename]")
 
-Example
+# Usage
 
 ```
 go ./ipparser both urls.txt
