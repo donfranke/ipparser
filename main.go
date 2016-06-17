@@ -8,8 +8,10 @@ package main
 import (
 	"bufio"
 	"bytes"
+	"flag"
 	"fmt"
 	"io"
+	"log"
 	"os"
 	"regexp"
 	"strings"
@@ -49,23 +51,18 @@ func main() {
 
 	// get command line arguments
 	// expected: name of file
-	var filename string
-	var sourceOrDest string
-
-	if len(os.Args) < 3 {
-		fmt.Println("Usage: [src|dest|both] [source filename]")
-		return
-	} else {
-		filename = os.Args[2]
-		sourceOrDest = os.Args[1]
+	filename := flag.String("i", "", "Name of IP address File")
+	sourceOrDest := flag.String("t", "", "Indicate whether you want the results to be for src_ip [src], dest_ip [dest], or both [b]")
+	flag.Parse()
+	if *filename == "" || *sourceOrDest == "" {
+		log.Fatal("EXECUTION HALTED: Not enough arguments supplied. Usage:\n" + showUsage())
 	}
-
+	
 	//lines, err := readLines("/users/dfranke/Documents/code/g1/ips.txt")
-	lines, err := readLines(filename)
+	lines, err := readLines(*filename)
 	var ipaddr string
 	if err != nil {
-		fmt.Println("Error: %s\n", err)
-		return
+		log.Fatal("ERROR:", err)
 	}
 	// display contents
 	var spl string
@@ -97,22 +94,31 @@ func main() {
 			spl += " OR "
 		}
 
-		if sourceOrDest == "src" {
+		if *sourceOrDest == "src" {
 			spl += "src_ip=" + ipaddr
 		}
-		if sourceOrDest == "dest" || sourceOrDest == "dst" {
+		if *sourceOrDest == "dest" || *sourceOrDest == "dst" {
 			spl += "dest_ip=" + ipaddr
 		}
-		if sourceOrDest == "both" {
+		if *sourceOrDest == "both" {
 			spl += "(src_ip=" + ipaddr + " OR dest_ip=" + ipaddr + ")"
 		}
 
 		i++
-		fmt.Printf("IP Address: %s\n", ipaddr)
+		//fmt.Printf("IP Address: %s\n", ipaddr)
 	}
 	spl += ")"
 	fmt.Println(strings.Repeat("=", 30) + " SNIP " + strings.Repeat("=", 30))
 	fmt.Println(spl)
 	fmt.Println(strings.Repeat("=", 30) + " /SNIP " + strings.Repeat("=", 30))
 
+}
+
+func showUsage() string {
+	var message string
+	message = strings.Repeat("-", 75) + "\n"
+	message += "\t-i = path/file of file that contains list of IP addresses\n"
+	message += "\t-t = fields to be included in results:\n\t\t[src]=src_ip\n\t\t[dest]]dest_ip\n\t\t[both]=both src_ip and dest_ip\n"
+	message += strings.Repeat("-", 75)
+	return message
 }
