@@ -54,6 +54,7 @@ func main() {
 	filename := flag.String("i", "", "Name of IP address File")
 	sourceOrDest := flag.String("t", "", "Indicate whether you want the results to be for src_ip [src], dest_ip [dest], or both [b]")
 	flag.Parse()
+	fmt.Printf("I=%s T=%s\n",*filename,*sourceOrDest)
 	if *filename == "" || *sourceOrDest == "" {
 		log.Fatal("EXECUTION HALTED: Not enough arguments supplied. Usage:\n" + showUsage())
 	}
@@ -70,6 +71,7 @@ func main() {
 	var i = 0
 	for _, line := range lines {
 		ipaddr = line
+		fmt.Println(ipaddr)
 
 		// desanitize
 		r := regexp.MustCompile(`\[[\.\,]\]`)
@@ -119,6 +121,7 @@ func showUsage() string {
 	message = strings.Repeat("-", 75) + "\n"
 	message += "\t-i = path/file of file that contains list of IP addresses\n"
 	message += "\t-t = fields to be included in results:\n\t\t[src]=src_ip\n\t\t[dest]]dest_ip\n\t\t[both]=both src_ip and dest_ip\n"
+	message += "\n\t Example: ./ipparser -i=/tmp/iplist.txt -t=src\n"
 	message += strings.Repeat("-", 75)
 	return message
 }
